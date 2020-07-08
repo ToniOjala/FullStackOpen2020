@@ -153,3 +153,39 @@ describe('most blogs', () => {
     })
   })
 })
+
+describe('most likes', () => {
+
+  test('with empty list returns empty object', () => {
+    const result = listHelper.mostLikes([])
+
+    expect(result).toEqual({})
+  })
+
+  test('with singular blog returns the author of that blog', () => {
+    const result = listHelper.mostLikes([
+      { 
+        _id: "5a422a851b54a676234d17f7",
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7,
+        __v: 0
+      }
+    ])
+
+    expect(result).toEqual({
+      name: "Michael Chan",
+      likes: 7
+    })
+  })
+
+  test('with big list returns correct blog', () => {
+    const result = listHelper.mostLikes(blogs)
+
+    expect(result).toEqual({
+      name: "Edsger W. Dijkstra",
+      likes: 17
+    })
+  })
+})

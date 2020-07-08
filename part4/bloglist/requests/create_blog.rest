@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "AnotherBlog",
-  "author": "Ojalan Tontsa",
-  "url": "www.anotherblog.com",
-  "likes": 5
+  "title": "ThirdBlog",
+  "author": "Toni Ojala",
+  "url": "www.thirdblog.com",
+  "likes": 86
 }

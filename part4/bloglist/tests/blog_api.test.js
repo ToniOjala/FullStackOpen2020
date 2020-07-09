@@ -109,6 +109,18 @@ test('likes property gets default value of 0 if not defined', async () => {
     expect(addedBlog.likes).toEqual(0)
 })
 
+test('blog without title and url properties is not added', async () => {
+  const newBlog = {
+    author: "Some random author",
+    likes: 1812
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

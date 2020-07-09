@@ -83,8 +83,30 @@ test('a valid blog can be added', async () => {
   const blogsAtEnd = response.body
   expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
   
-  const titles = blogsAtEnd.map(blog => blog.title)
-  expect(titles).toContain(newBlog.title)
+  const addedBlog = blogsAtEnd.find(blog => blog.title === newBlog.title)
+  expect(addedBlog).toBeTruthy()
+  expect(addedBlog.author).toEqual(newBlog.author)
+  expect(addedBlog.url).toEqual(newBlog.url)
+  expect(addedBlog.likes).toEqual(newBlog.likes)
+})
+
+test('likes property gets default value of 0 if not defined', async () => {
+  const newBlog = {
+    title: "Some random blog",
+    author: "Some random author",
+    url: "https:/www.randomblogbyrandomauthor.com",
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+
+    const response = await api.get('/api/blogs')
+    const blogsAtEnd = response.body
+
+    const addedBlog = blogsAtEnd.find(blog => blog.title === newBlog.title)
+    expect(addedBlog).toBeTruthy()
+    expect(addedBlog.likes).toEqual(0)
 })
 
 afterAll(() => {

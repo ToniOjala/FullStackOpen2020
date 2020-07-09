@@ -141,6 +141,31 @@ describe('deleting a blog', () => {
   })
 })
 
+describe('updating a blog', () => {
+  test('succeeds with valid data', async () => {
+    let response = await api.get('/api/blogs')
+    const blogToUpdate = response.body[0]
+
+    blogToUpdate.title = "Updated Title"
+    blogToUpdate.author = "Updated Author"
+    blogToUpdate.url = "Updated Url"
+    blogToUpdate.likes = 1
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+      .expect(200)
+
+    response = await api.get('/api/blogs')
+    const updatedBlog = response.body[0]
+
+    expect(updatedBlog.title).toEqual(blogToUpdate.title)
+    expect(updatedBlog.author).toEqual(blogToUpdate.author)
+    expect(updatedBlog.url).toEqual(blogToUpdate.url)
+    expect(updatedBlog.likes).toEqual(blogToUpdate.likes)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

@@ -2,47 +2,47 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-const initialBlogs = [ 
-  { 
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-  },
-  {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5,
-  },
-  {
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    likes: 12,
-  },
-  {
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-    likes: 0, 
-  },
-  {
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
+let token = 'bearer '
+
+beforeAll(async () => {
+  await User.deleteMany()
+
+  const user = {
+    name: 'Toni Ojala',
+    username: 'ojaton',
+    password: 'asd123'
   }
-]
+
+  await api
+    .post('/api/users')
+    .send(user)
+   
+  delete user.name  
+
+  await api
+    .post('/api/login')
+    .send(user)
+    .then(response => {
+      token = token.concat(response.body.token)
+    })
+})
 
 beforeEach(async () => {
   await Blog.deleteMany()
 
-  const blogObjects = initialBlogs
+  const blogObjects = helper.initialBlogs
     .map(blog => new Blog(blog))
-  const promises = blogObjects.map(blog => blog.save())
+  const promises = blogObjects.map(blog => 
+    api
+      .post('/api/blogs')
+      .send(blog)
+      .set('Authorization', token)
+  )
+
   await Promise.all(promises)
 })
 
@@ -56,7 +56,7 @@ describe('when there are initally some blogs saved', () => {
 
   test('correct amount of blogs are returned', async () => {
     const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(initialBlogs.length)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
   test('blogs have property named id', async () => {
@@ -79,12 +79,12 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-    const blogsAtEnd = response.body
-    expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
     const addedBlog = blogsAtEnd.find(blog => blog.title === newBlog.title)
     expect(addedBlog).toBeTruthy()
@@ -103,9 +103,9 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
   
-      const response = await api.get('/api/blogs')
-      const blogsAtEnd = response.body
+      const blogsAtEnd = await helper.blogsInDb()
   
       const addedBlog = blogsAtEnd.find(blog => blog.title === newBlog.title)
       expect(addedBlog).toBeTruthy()
@@ -121,7 +121,22 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(400)
+  })
+
+  test('fails with statuscode 401 if token is not provided', async () => {
+    const newBlog = {
+      title: "Some random blog",
+      author: "Some random author",
+      url: "https:/www.randomblogbyrandomauthor.com",
+      likes: 8429
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
   })
 })
 
@@ -132,12 +147,12 @@ describe('deleting a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', token)
       .expect(204)
 
-    response = await api.get('/api/blogs')
-    const blogs = response.body
+      const blogs = await helper.blogsInDb()
 
-    expect(blogs).toHaveLength(initialBlogs.length - 1)
+    expect(blogs).toHaveLength(helper.initialBlogs.length - 1)
   })
 })
 
@@ -156,8 +171,8 @@ describe('updating a blog', () => {
       .send(blogToUpdate)
       .expect(200)
 
-    response = await api.get('/api/blogs')
-    const updatedBlog = response.body[0]
+    const blogs = await helper.blogsInDb()
+    const updatedBlog = blogs[0]
 
     expect(updatedBlog.title).toEqual(blogToUpdate.title)
     expect(updatedBlog.author).toEqual(blogToUpdate.author)

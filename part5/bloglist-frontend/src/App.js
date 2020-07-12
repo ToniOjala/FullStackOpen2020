@@ -8,6 +8,43 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
+  const blogForm = () => (
+    <form onSubmit={addNewBlog}>
+      <h2>Create New</h2>
+      <div>
+        title:
+        <input
+          type="text"
+          value={title}
+          name="Title"
+          onChange={({target}) => setTitle(target.value)}
+        />
+      </div>
+      <div>
+        author:
+        <input
+          type="text"
+          value={author}
+          name="Author"
+          onChange={({target}) => setAuthor(target.value)}
+        />
+      </div>
+      <div>
+        url:
+        <input
+          type="text"
+          value={url}
+          name="Url"
+          onChange={({target}) => setUrl(target.value)}
+        />
+      </div>
+      <button type="submit">Create</button>
+    </form>
+  )
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -36,13 +73,12 @@ const App = () => {
 
   const blogsView = () => (
     <div>
-      <h2>Blogs</h2>
-
       <p>
         Logged in as {user.name}
         <button onClick={handleLogout}>Log Out</button>
       </p>
 
+      <h2>Blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
@@ -64,27 +100,43 @@ const App = () => {
     }
   }, [])
 
+  const addNewBlog = async event => {
+    event.preventDefault()
+
+    const blogObject = {
+      title, author, url
+    }
+
+    const returnedBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(returnedBlog))
+  }
+
   const handleLogin = async event => {
     event.preventDefault()
     try {
       const user = await loginService.login({username, password})
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       setUser(user)
+      blogService.setToken(user.token)
     } catch (exception) {
       console.log(exception)
-      console.log('Wrong credentials')
+      console.log('Wrong credentials')  
     }
   }
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedInUser')
+    blogService.setToken('')
     window.location.reload(false)
   }
 
   return (
     <div>
       { user ?
-        blogsView() :
+        <div>
+          { blogsView() }
+          { blogForm() }
+        </div> :
         loginForm()
       }
     </div>

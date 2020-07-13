@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const blogForm = () => (
     <form onSubmit={addNewBlog}>
@@ -73,11 +76,6 @@ const App = () => {
 
   const blogsView = () => (
     <div>
-      <p>
-        Logged in as {user.name}
-        <button onClick={handleLogout}>Log Out</button>
-      </p>
-
       <h2>Blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
@@ -109,6 +107,7 @@ const App = () => {
 
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
+    showSuccessMessage(`Blog added: '${returnedBlog.title}'`)
   }
 
   const handleLogin = async event => {
@@ -120,7 +119,7 @@ const App = () => {
       blogService.setToken(user.token)
     } catch (exception) {
       console.log(exception)
-      console.log('Wrong credentials')  
+      showErrorMessage('Wrong credentials')
     }
   }
 
@@ -130,8 +129,31 @@ const App = () => {
     window.location.reload(false)
   }
 
+  const showSuccessMessage = message => {
+    setSuccessMessage(message)
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 3000)
+  }
+
+  const showErrorMessage = message => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 3000)
+  }
+
   return (
     <div>
+      {user ?
+        <p>
+          Logged in as {user.name}
+          <button onClick={handleLogout}>Log Out</button>
+        </p> :
+        <div></div>
+      }
+      <Notification message={successMessage} type='success' />
+      <Notification message={errorMessage} type='error' />
       { user ?
         <div>
           { blogsView() }

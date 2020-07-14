@@ -18,7 +18,7 @@ const App = () => {
     <div>
       <h2>Blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   )
@@ -44,6 +44,15 @@ const App = () => {
     setBlogs(blogs.concat(returnedBlog))
     showSuccessMessage(`Blog added: '${returnedBlog.title}'`)
 
+  }
+
+  const updateBlog = async (id, blogObject) => {
+    const returnedBlog = await blogService.update(id, blogObject)
+    const copy = blogs.map(blog => {
+      if (blog.id === returnedBlog.id) return returnedBlog
+      return blog
+    })
+    setBlogs(copy)
   }
 
   const handleLogin = async event => {

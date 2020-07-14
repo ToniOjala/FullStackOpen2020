@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [buttonText, setButtonText] = useState('Show')
 
@@ -8,6 +8,18 @@ const Blog = ({ blog }) => {
     setShowDetails(!showDetails)
     if (buttonText === 'Show') setButtonText('Hide')
     else setButtonText('Show')
+  }
+
+  const addLike = async () => {
+    const blogObject = {
+      title: blog.title,
+      author: blog.author,
+      likes: blog.likes + 1,
+      url: blog.url,
+      user: blog.user.id
+    }
+
+    updateBlog(blog.id, blogObject)
   }
 
   return (
@@ -19,7 +31,7 @@ const Blog = ({ blog }) => {
           <p>{blog.url}</p>
           <p>
             likes {blog.likes}
-            <button>Like</button>
+            <button onClick={addLike}>Like</button>
           </p>
           <p>{blog.user.name}</p>
         </div> : 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -15,38 +16,42 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
+  const blogFormRef = useRef()
+
   const blogForm = () => (
-    <form onSubmit={addNewBlog}>
-      <h2>Create New</h2>
-      <div>
-        title:
-        <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({target}) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
-        <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange={({target}) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
-        <input
-          type="text"
-          value={url}
-          name="Url"
-          onChange={({target}) => setUrl(target.value)}
-        />
-      </div>
-      <button type="submit">Create</button>
-    </form>
+    <Togglable buttonLabel="New Note" ref={blogFormRef}>
+      <form onSubmit={addNewBlog}>
+        <h2>Create New</h2>
+        <div>
+          title:
+          <input
+            type="text"
+            value={title}
+            name="Title"
+            onChange={({target}) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          author:
+          <input
+            type="text"
+            value={author}
+            name="Author"
+            onChange={({target}) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          url:
+          <input
+            type="text"
+            value={url}
+            name="Url"
+            onChange={({target}) => setUrl(target.value)}
+          />
+        </div>
+        <button type="submit">Create</button>
+      </form>
+    </Togglable>
   )
 
   const loginForm = () => (
@@ -106,8 +111,10 @@ const App = () => {
     }
 
     const returnedBlog = await blogService.create(blogObject)
+    blogFormRef.current.toggleVisibility()
     setBlogs(blogs.concat(returnedBlog))
     showSuccessMessage(`Blog added: '${returnedBlog.title}'`)
+
   }
 
   const handleLogin = async event => {

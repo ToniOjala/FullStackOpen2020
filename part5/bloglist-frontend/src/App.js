@@ -18,7 +18,13 @@ const App = () => {
     <div>
       <h2>Blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          updateBlog={updateBlog}
+          loggedInUser={user}
+          deleteBlog={deleteBlog}
+        />
       )}
     </div>
   )
@@ -54,6 +60,13 @@ const App = () => {
       return blog
     })
     setBlogs(copy)
+  }
+
+  const deleteBlog = async id => {
+    await blogService.deleteBlog(id)
+    const updatedBlogs = blogs.filter(blog => blog.id !== id)
+    setBlogs(updatedBlogs)
+    showSuccessMessage('Blog deleted')
   }
 
   const handleLogin = async event => {

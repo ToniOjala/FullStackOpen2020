@@ -59,9 +59,9 @@ describe('BlogList app', function() {
 
     describe('and several blogs exist', function() {
       beforeEach(function() {
-        cy.createBlog({ title: 'FirstBlog', author: 'AuthorOne', url: 'www.firstblog.com' })
+        cy.createBlog({ title: 'FirstBlog', author: 'AuthorOne', url: 'www.firstblog.com', likes: 81 })
         cy.createBlog({ title: 'SecondBlog', author: 'AuthorOne', url: 'www.secondtblog.com' })
-        cy.createBlog({ title: 'ThirdBlog', author: 'AuthorTwo', url: 'www.thirdblog.com' })
+        cy.createBlog({ title: 'ThirdBlog', author: 'AuthorTwo', url: 'www.thirdblog.com', likes: 12 })
       })
 
       it('a blog can be liked', function() {
@@ -84,13 +84,31 @@ describe('BlogList app', function() {
         cy.should('not.contain', 'ThirdBlog - by AuthorTwo')
       })
 
-      it.only('a user cannot remove blogs created by someone else', function() {
+      it('a user cannot remove blogs created by someone else', function() {
         cy.contains('Log Out').click()
         cy.login({ username: 'majmei', password: 'asd123' })
         cy.contains('ThirdBlog - by AuthorTwo')
           .contains('Show').click()
 
         cy.should('not.contain', 'Remove')
+      })
+
+      it.only('blogs are sorted according to likes', function() {
+        cy.contains('FirstBlog')
+          .contains('Show').click()
+
+        cy.contains('SecondBlog')
+          .contains('Show').click()
+
+        cy.contains('ThirdBlog')
+          .contains('Show').click()
+
+        cy.get('.blog')
+          .then(results => {
+            cy.get(results[0]).contains('likes 81')
+            cy.get(results[1]).contains('likes 12')
+            cy.get(results[2]).contains('likes 0')
+          })
       })
     })
   })

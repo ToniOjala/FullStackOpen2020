@@ -35,4 +35,21 @@ describe('BlogList app', function() {
         .and('have.css', 'color', 'rgb(139, 0, 0)')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'matmei', password: 'sala123' })
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('New Blog').click()
+      cy.get('#title').type('Test Title')
+      cy.get('#author').type('Test Author')
+      cy.get('#url').type('www.testurl.com')
+      cy.get('#create-button').click()
+
+      cy.contains('Blog added')
+      cy.contains('Test Title - by Test Author')
+    })
+  })
 })

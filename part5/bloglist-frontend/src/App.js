@@ -27,6 +27,7 @@ const App = () => {
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -35,7 +36,6 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     setBlogs(blogs.concat(returnedBlog))
     showSuccessMessage(`Blog added: '${returnedBlog.title}'`)
-
   }
 
   const updateBlog = async (id, blogObject) => {

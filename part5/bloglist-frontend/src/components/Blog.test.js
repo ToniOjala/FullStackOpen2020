@@ -5,7 +5,7 @@ import Blog from './Blog'
 
 describe('<Blog />', () => {
 
-  let blog, component
+  let blog, component, mockHandler
 
   beforeEach(() => {
     blog = {
@@ -24,8 +24,10 @@ describe('<Blog />', () => {
       username: 'testuser'
     }
 
+    mockHandler = jest.fn()
+
     component = render(
-      <Blog blog={blog} loggedInUser={loggedInUser} />
+      <Blog blog={blog} loggedInUser={loggedInUser} updateBlog={mockHandler} />
     )
   })
 
@@ -46,5 +48,16 @@ describe('<Blog />', () => {
 
     expect(url).toBeDefined()
     expect(likes).toBeDefined()
+  })
+
+  test('clicking like twice fires appropriate event handler twice', () => {
+    const button = component.getByText('Show')
+    fireEvent.click(button)
+
+    const likeButton = component.getByText('Like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })

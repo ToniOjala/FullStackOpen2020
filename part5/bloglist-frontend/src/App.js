@@ -14,21 +14,6 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
-  const blogsView = () => (
-    <div>
-      <h2>Blogs</h2>
-      {blogs.map(blog =>
-        <Blog 
-          key={blog.id}
-          blog={blog}
-          updateBlog={updateBlog}
-          loggedInUser={user}
-          deleteBlog={deleteBlog}
-        />
-      )}
-    </div>
-  )
-
   useEffect(() => {
     blogService.getAll().then(blogs => {
       blogs.sort((a, b) => b.likes - a.likes)
@@ -101,6 +86,21 @@ const App = () => {
       setErrorMessage(null)
     }, 3000)
   }
+
+  const blogsView = () => (
+    <div>
+      <h2>Blogs</h2>
+      {blogs.map(blog =>
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          updateBlog={updateBlog}
+          loggedInUser={user}
+          deleteBlog={deleteBlog}
+        />
+      )}
+    </div>
+  )
 
   const blogFormRef = useRef()
 

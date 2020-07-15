@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const Blog = ({ blog, loggedInUser, updateBlog, deleteBlog }) => {
@@ -33,7 +33,7 @@ const Blog = ({ blog, loggedInUser, updateBlog, deleteBlog }) => {
     <div className="blog">
       {blog.title} - by {blog.author}
       <button onClick={toggleShowDetails}>{buttonText}</button>
-      {showDetails ? 
+      {showDetails ?
         <div>
           <p>{blog.url}</p>
           <p>
@@ -45,7 +45,7 @@ const Blog = ({ blog, loggedInUser, updateBlog, deleteBlog }) => {
             <p><button onClick={removeBlog}>Remove</button></p> :
             <div></div>
           }
-        </div> : 
+        </div> :
         <div></div>
       }
     </div>

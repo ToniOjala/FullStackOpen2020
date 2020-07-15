@@ -57,7 +57,7 @@ const App = () => {
   const handleLogin = async event => {
     event.preventDefault()
     try {
-      const user = await loginService.login({username, password})
+      const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       setUser(user)
       blogService.setToken(user.token)
@@ -91,7 +91,7 @@ const App = () => {
     <div>
       <h2>Blogs</h2>
       {blogs.map(blog =>
-        <Blog 
+        <Blog
           key={blog.id}
           blog={blog}
           updateBlog={updateBlog}
@@ -119,7 +119,7 @@ const App = () => {
           type="text"
           value={username}
           name="Username"
-          onChange={({target}) => setUsername(target.value)}
+          onChange={({ target }) => setUsername(target.value)}
         />
       </div>
       <div>
@@ -128,7 +128,7 @@ const App = () => {
           type="password"
           value={password}
           name="Password"
-          onChange={({target}) => setPassword(target.value)}
+          onChange={({ target }) => setPassword(target.value)}
         />
       </div>
       <button type="submit">Log In</button>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -13,7 +13,7 @@ const BlogForm = ({ createBlog }) => {
     setUrl('')
   }
 
-  return (  
+  return (
     <form onSubmit={addBlog}>
       <h2>Create New</h2>
       <div>
@@ -22,7 +22,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={title}
           name="Title"
-          onChange={({target}) => setTitle(target.value)}
+          onChange={({ target }) => setTitle(target.value)}
         />
       </div>
       <div>
@@ -31,7 +31,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={author}
           name="Author"
-          onChange={({target}) => setAuthor(target.value)}
+          onChange={({ target }) => setAuthor(target.value)}
         />
       </div>
       <div>
@@ -40,7 +40,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={url}
           name="Url"
-          onChange={({target}) => setUrl(target.value)}
+          onChange={({ target }) => setUrl(target.value)}
         />
       </div>
       <button type="submit">Create</button>

@@ -7,11 +7,10 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSuccessMessage, setErrorMessage } from './reducers/notificationReducer'
-import { initializeBlogs, createBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, deleteBlog } from './reducers/blogReducer'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
-  // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -38,21 +37,10 @@ const App = () => {
     dispatch(setSuccessMessage(`Blog added: '${blogObject.title}`))
   }
 
-  // const updateBlog = async (id, blogObject) => {
-  //   const returnedBlog = await blogService.update(id, blogObject)
-  //   // const copy = blogs.map(blog => {
-  //   //   if (blog.id === returnedBlog.id) return returnedBlog
-  //   //   return blog
-  //   // })
-  //   // setBlogs(copy)
-  // }
-
-  // const deleteBlog = async id => {
-  //   await blogService.deleteBlog(id)
-  //   const updatedBlogs = blogs.filter(blog => blog.id !== id)
-  //   setBlogs(updatedBlogs)
-  //   dispatch(setSuccessMessage('Blog deleted'))
-  // }
+  const deleteABlog = async id => {
+    dispatch(deleteBlog(id))
+    dispatch(setSuccessMessage('Blog deleted'))
+  }
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -82,7 +70,7 @@ const App = () => {
           blog={blog}
           // updateBlog={updateBlog}
           loggedInUser={user}
-          // deleteBlog={deleteBlog}
+          deleteBlog={deleteABlog}
         />
       )}
     </div>

@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { addLike } from '../reducers/blogReducer'
 
-const Blog = ({ blog, loggedInUser, updateBlog, deleteBlog }) => {
+const Blog = ({ blog, loggedInUser, deleteBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [buttonText, setButtonText] = useState('Show')
+  const dispatch = useDispatch()
 
   const toggleShowDetails = () => {
     setShowDetails(!showDetails)
@@ -11,16 +14,8 @@ const Blog = ({ blog, loggedInUser, updateBlog, deleteBlog }) => {
     else setButtonText('Show')
   }
 
-  const addLike = async () => {
-    const blogObject = {
-      title: blog.title,
-      author: blog.author,
-      likes: blog.likes + 1,
-      url: blog.url,
-      user: blog.user.id
-    }
-
-    await updateBlog(blog.id, blogObject)
+  const addALike = () => {
+    dispatch(addLike(blog))
   }
 
   const removeBlog = async () => {
@@ -38,7 +33,7 @@ const Blog = ({ blog, loggedInUser, updateBlog, deleteBlog }) => {
           <p>{blog.url}</p>
           <p>
             likes {blog.likes}
-            <button onClick={addLike}>Like</button>
+            <button onClick={addALike}>Like</button>
           </p>
           <p>{blog.user.name}</p>
           {loggedInUser.username === blog.user.username ?

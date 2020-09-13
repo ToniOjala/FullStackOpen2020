@@ -5,11 +5,13 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setSuccessMessage, setErrorMessage } from './reducers/notificationReducer'
+import { initializeBlogs, createBlog } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blogs)
+  // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -17,11 +19,8 @@ const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
-      blogs.sort((a, b) => b.likes - a.likes)
-      setBlogs( blogs )
-    })
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
@@ -34,27 +33,26 @@ const App = () => {
   }, [])
 
   const addNewBlog = async blogObject => {
-    const returnedBlog = await blogService.create(blogObject)
+    dispatch(createBlog(blogObject))
     blogFormRef.current.toggleVisibility()
-    setBlogs(blogs.concat(returnedBlog))
-    dispatch(setSuccessMessage(`Blog added: '${returnedBlog.title}`))
+    dispatch(setSuccessMessage(`Blog added: '${blogObject.title}`))
   }
 
-  const updateBlog = async (id, blogObject) => {
-    const returnedBlog = await blogService.update(id, blogObject)
-    const copy = blogs.map(blog => {
-      if (blog.id === returnedBlog.id) return returnedBlog
-      return blog
-    })
-    setBlogs(copy)
-  }
+  // const updateBlog = async (id, blogObject) => {
+  //   const returnedBlog = await blogService.update(id, blogObject)
+  //   // const copy = blogs.map(blog => {
+  //   //   if (blog.id === returnedBlog.id) return returnedBlog
+  //   //   return blog
+  //   // })
+  //   // setBlogs(copy)
+  // }
 
-  const deleteBlog = async id => {
-    await blogService.deleteBlog(id)
-    const updatedBlogs = blogs.filter(blog => blog.id !== id)
-    setBlogs(updatedBlogs)
-    dispatch(setSuccessMessage('Blog deleted'))
-  }
+  // const deleteBlog = async id => {
+  //   await blogService.deleteBlog(id)
+  //   const updatedBlogs = blogs.filter(blog => blog.id !== id)
+  //   setBlogs(updatedBlogs)
+  //   dispatch(setSuccessMessage('Blog deleted'))
+  // }
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -82,9 +80,9 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
-          updateBlog={updateBlog}
+          // updateBlog={updateBlog}
           loggedInUser={user}
-          deleteBlog={deleteBlog}
+          // deleteBlog={deleteBlog}
         />
       )}
     </div>

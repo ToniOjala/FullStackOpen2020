@@ -4,6 +4,7 @@ import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Users from './components/Users'
+import User from './components/User'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
@@ -15,14 +16,10 @@ import { setUser, removeUser } from './reducers/userReducer'
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
-
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
-  }, [dispatch])
-
-  useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
 
     if (loggedInUserJSON) {
@@ -61,6 +58,9 @@ const App = () => {
         <Notification />
         <Router>
           <Switch>
+            <Route path="/users/:id">
+              <User />
+            </Route>
             <Route path="/users">
               <Users />
             </Route>

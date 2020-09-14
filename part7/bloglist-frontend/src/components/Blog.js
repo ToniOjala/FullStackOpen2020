@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
-import { addLike } from '../reducers/blogReducer'
+import { addLike } from '../reducers/blogsReducer'
 
 const Blog = ({ blog, loggedInUser, deleteBlog }) => {
   const [showDetails, setShowDetails] = useState(false)

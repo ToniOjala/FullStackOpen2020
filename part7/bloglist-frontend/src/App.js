@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+import React, { useEffect, useRef } from 'react'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import Users from './components/Users'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setSuccessMessage, setErrorMessage } from './reducers/notificationReducer'
-import { initializeBlogs, createBlog, deleteBlog } from './reducers/blogReducer'
-import { setUser, loginUser, removeUser } from './reducers/userReducer'
+import { setSuccessMessage } from './reducers/notificationReducer'
+import { initializeBlogs, createBlog, deleteBlog } from './reducers/blogsReducer'
+import { setUser, removeUser } from './reducers/userReducer'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
 
@@ -42,91 +43,46 @@ const App = () => {
     dispatch(setSuccessMessage('Blog deleted'))
   }
 
-  const handleLogin = async event => {
-    event.preventDefault()
-    try {
-      dispatch(loginUser({ username, password }))
-      blogService.setToken(user.token)
-    } catch (exception) {
-      console.log(exception)
-      dispatch(setErrorMessage('Wrong credentials'))
-    }
-  }
-
   const handleLogout = () => {
     dispatch(removeUser())
     blogService.setToken('')
     window.location.reload(false)
   }
 
-  const blogsView = () => (
-    <div>
-      <h2>Blogs</h2>
-      {blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          loggedInUser={user}
-          deleteBlog={deleteABlog}
-        />
-      )}
-    </div>
-  )
-
   const blogFormRef = useRef()
 
-  const blogForm = () => (
-    <Togglable buttonLabel="New Blog" ref={blogFormRef}>
-      <BlogForm createBlog={addNewBlog} />
-    </Togglable>
-  )
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <h2>Please log in</h2>
+  if (Object.keys(user).length > 0) {
+    return (
       <div>
-        username
-        <input
-          id="username"
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          id="password"
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button id="login-button" type="submit">Log In</button>
-    </form>
-  )
-
-  return (
-    <div>
-      {Object.keys(user).length > 0 ?
         <p>
           Logged in as {user.name}
           <button onClick={handleLogout}>Log Out</button>
-        </p> :
-        <div></div>
-      }
-      <Notification />
-      { Object.keys(user).length > 0 ?
-        <div>
-          { blogsView() }
-          { blogForm() }
-        </div> :
-        loginForm()
-      }
-    </div>
-  )
+        </p>
+        <Notification />
+        <Router>
+          <Switch>
+            <Route path="/users">
+              <Users />
+            </Route>
+            <Route path="/">
+              <BlogList
+                blogs={blogs}
+                user={user}
+                deleteBlog={deleteABlog}
+              />
+              <Togglable buttonLabel="New Blog" ref={blogFormRef}>
+                <BlogForm createBlog={addNewBlog} />
+              </Togglable>
+            </Route>
+          </Switch>
+        </Router>
+      </div>
+    )
+  } else {
+    return (
+      <LoginForm user={user} />
+    )
+  }
 }
 
 export default App

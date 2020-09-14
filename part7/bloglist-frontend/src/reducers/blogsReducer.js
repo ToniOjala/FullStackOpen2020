@@ -1,6 +1,6 @@
 import blogService from '../services/blogs'
 
-const blogReducer = (state = [], action) => {
+const blogsReducer = (state = [], action) => {
   switch (action.type) {
   case 'CREATE_BLOG':
     return state.concat(action.data)
@@ -55,4 +55,4 @@ export const initializeBlogs = () => {
   }
 }
 
-export default blogReducer
+export default blogsReducer

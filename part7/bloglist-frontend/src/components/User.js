@@ -17,6 +17,8 @@ const User = () => {
     return usersBlogs
   }
 
+  if (!user) return null
+
   return (
     <div>
       <h2>{user.name}</h2>

@@ -3,6 +3,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import BlogDetails from './components/BlogDetails'
 import Users from './components/Users'
 import User from './components/User'
 import LoginForm from './components/LoginForm'
@@ -63,6 +64,9 @@ const App = () => {
             </Route>
             <Route path="/users">
               <Users />
+            </Route>
+            <Route path="/blogs/:id">
+              <BlogDetails />
             </Route>
             <Route path="/">
               <BlogList

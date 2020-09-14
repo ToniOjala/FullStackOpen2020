@@ -11,7 +11,7 @@ const Users = () => {
   const blogsWrittenBy = user => {
     let count = 0
     blogs.forEach(b => {
-      if (b.user.id === user.id) count++
+      if (b.user && b.user.id === user.id) count++
     })
 
     return count

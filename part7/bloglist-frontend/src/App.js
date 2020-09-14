@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import Navigation from './components/Navigation'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
@@ -52,12 +53,9 @@ const App = () => {
   if (Object.keys(user).length > 0) {
     return (
       <div>
-        <p>
-          Logged in as {user.name}
-          <button onClick={handleLogout}>Log Out</button>
-        </p>
-        <Notification />
         <Router>
+          <Navigation user={user} handleLogout={handleLogout} />
+          <Notification />
           <Switch>
             <Route path="/users/:id">
               <User />

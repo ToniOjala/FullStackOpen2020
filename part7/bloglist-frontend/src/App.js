@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import Container from '@material-ui/core/Container'
 import Navigation from './components/Navigation'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -52,7 +53,7 @@ const App = () => {
 
   if (Object.keys(user).length > 0) {
     return (
-      <div>
+      <Container>
         <Router>
           <Navigation user={user} handleLogout={handleLogout} />
           <Notification />
@@ -78,7 +79,7 @@ const App = () => {
             </Route>
           </Switch>
         </Router>
-      </div>
+      </Container>
     )
   } else {
     return (

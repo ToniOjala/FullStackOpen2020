@@ -20,18 +20,15 @@ const create = async blog => {
   blog.comments = []
 
   const response = await axios.post(baseUrl, blog, config)
-  console.log(response.data)
   return response.data
 }
 
 const update = async (blog) => {
-  console.log(blog)
   const config = {
     headers: { Authorization: token }
   }
 
   const response = await axios.put(`${baseUrl}/${blog.id}`, blog, config)
-  console.log(response.data)
   return response.data
 }
 

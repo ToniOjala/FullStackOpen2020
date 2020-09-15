@@ -15,14 +15,33 @@ const BlogDetails = () => {
 
   if (!blog) return null
 
-  return (
-    <div>
-      <h2>{blog.title}</h2>
-      <a href={blog.url}>{blog.url}</a>
-      <div>{blog.likes} likes <button onClick={addALike}>Like</button></div>
-      <div>Added by {blog.user.name}</div>
-    </div>
-  )
+  if (blog.comments) {
+    return (
+      <div>
+        <h2>{blog.title}</h2>
+        <a href={blog.url}>{blog.url}</a>
+        <div>{blog.likes} likes <button onClick={addALike}>Like</button></div>
+        <div>Added by {blog.user.name}</div>
+        <h3>Comments</h3>
+        <ul>
+          {blog.comments.map(c =>
+            <li key={c}>
+              {c}
+            </li>
+          )}
+        </ul>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <h2>{blog.title}</h2>
+        <a href={blog.url}>{blog.url}</a>
+        <div>{blog.likes} likes <button onClick={addALike}>Like</button></div>
+        <div>Added by {blog.user.name}</div>
+      </div>
+    )
+  }
 }
 
 export default BlogDetails

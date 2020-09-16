@@ -1,33 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import Select from 'react-select'
 import { useMutation } from '@apollo/client'
 import { EDIT_AUTHOR } from '../queries'
 
-const AuthorForm = () => {
-  const [name, setName] = useState('')
+const AuthorForm = ({ authors }) => {
+  const [selectedAuthor, setSelectedAuthor] = useState(null)
   const [born, setBorn] = useState('')
+  const [options, setOptions] = useState([])
   const [ editAuthor ] = useMutation(EDIT_AUTHOR)
 
   const submit = async event => {
     event.preventDefault()
 
-    editAuthor({ variables: { name, born } })
-
-    setName('')
+    editAuthor({ variables: { name: selectedAuthor.value, born } })
+    
+    setSelectedAuthor(null)
     setBorn('')
   }
+
+  useEffect(() => {
+    const opts = []
+    authors.forEach(a => {
+      opts.push({ value: a.name, label: a.name })
+    })
+    setOptions(opts)
+  }, [authors])
 
   return (
     <form onSubmit={submit}>
       <h2>Set birthyear</h2>
-      <div>
-        name
-        <input
-          type="text"
-          id="name"
-          name="name"
-          onChange={({ target }) => setName(target.value)}
-        />
-      </div>
+      <Select
+        defaultValue={selectedAuthor}
+        onChange={setSelectedAuthor}
+        options={options}
+      />
       <div>
         born
         <input

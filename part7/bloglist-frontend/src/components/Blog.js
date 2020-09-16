@@ -6,10 +6,13 @@ import Card from '@material-ui/core/Card'
 
 const useStyles = makeStyles({
   root: {
-    minWidth: 300,
-    maxWidth: 400,
+    width: 250,
     padding: 10,
     marginBottom: 10
+  },
+  link: {
+    textDecoration: 'none',
+    color: 'black'
   }
 })
 
@@ -18,7 +21,7 @@ const Blog = ({ blog }) => {
 
   return (
     <Card className={classes.root} variant="outlined">
-      <Link to={'/blogs/' + blog.id}>{blog.title} - by {blog.author}</Link>
+      <Link className={classes.link} to={'/blogs/' + blog.id}>{blog.title} - by {blog.author}</Link>
     </Card>
   )
 }

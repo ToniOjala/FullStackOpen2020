@@ -1,4 +1,4 @@
-const { ApolloServer, gql, UserInputError } = require('apollo-server')
+const { ApolloServer, gql, UserInputError, addResolveFunctionsToSchema } = require('apollo-server')
 const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
@@ -41,7 +41,7 @@ const typeDefs = gql`
   type Query {
     authorCount: Int!
     bookCount: Int!
-    allBooks(author: String, genre: String): [Book]
+    allBooks(genre: String): [Book]
     allAuthors: [Author!]!
   }
 
@@ -60,21 +60,25 @@ const typeDefs = gql`
 `
 
 const resolvers = {
-  Query: {
-    authorCount: () => Author.collection().countDocuments(),
-    bookCount: () => Book.collection().countDocuments(),
-    allBooks: (root, args) => {
-      let output = books
-      if (args.author) output = output.filter(b => b.author === args.author)
-      if (args.genre) output = output.filter(b => b.genres.includes(args.genre))
-      return output
-    },
-    allAuthors: () => Author.find({})
-  },
   Author: {
     bookCount: root => {
-      return Book.collection().filter(b => b.author.name === root.name).length
+      return Book.find({ author: root._id }).countDocuments()
     }
+  },
+  Query: {
+    authorCount: () => Author.collection.countDocuments(),
+    bookCount: () => Book.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      let books
+      if (!args.genre) {
+        books = await Book.find({}).populate('author')
+      } else {
+        books = await Book.find({ genres: { $in: [args.genre] } }).populate('author')
+      }
+
+      return books
+    },
+    allAuthors: () => Author.find({})
   },
   Mutation: {
     addBook: async (root, args) => {
@@ -98,12 +102,10 @@ const resolvers = {
         throw new UserInputError(error.message, { invalidArgs: args })
       }
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)
-      if (!author) return null
-
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+    editAuthor: async (root, args) => {
+      await Author.findOneAndUpdate({ name: args.name }, { born: args.setBornTo })
+      
+      const updatedAuthor = Author.findOne({ name: args.name })
       return updatedAuthor
     }
   }

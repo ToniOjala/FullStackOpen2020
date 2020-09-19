@@ -4,13 +4,11 @@ import { ALL_AUTHORS } from '../queries'
 import AuthorForm from './AuthorForm'
 
 const Authors = (props) => {
-  // const result = useQuery(ALL_AUTHORS)
+  const result = useQuery(ALL_AUTHORS)
 
-  // if (!props.show || result.loading) return null
-  if (!props.show) return null
+  if (!props.show || result.loading) return null
 
-  // const authors = result.data.allAuthors
-  const authors = []
+  const authors = result.data.allAuthors
 
   return (
     <div>
@@ -18,13 +16,9 @@ const Authors = (props) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
-            <th>
-              born
-            </th>
-            <th>
-              books
-            </th>
+            <th>Name</th>
+            <th>Born</th>
+            <th>Books</th>
           </tr>
           {authors.map(a =>
             <tr key={a.name}>

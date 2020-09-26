@@ -19,7 +19,7 @@ const Books = (props) => {
     } else {
       setBooks(allBooks)
     }
-  }, [selectedGenre])
+  }, [selectedGenre]) //eslint-disable-line
 
   if (!props.show || booksResult.loading || genresResult.loading) return null
 

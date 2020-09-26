@@ -17,8 +17,15 @@ export const ALL_BOOKS = gql`
       title
       author { name, born }
       published
+      genres
       id
     }
+  }
+`
+
+export const ALL_GENRES = gql`
+  query {
+    allGenres
   }
 `
 

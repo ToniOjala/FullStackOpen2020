@@ -87,11 +87,6 @@ const typeDefs = gql`
 `
 
 const resolvers = {
-  Author: {
-    bookCount: root => {
-      return Book.find({ author: root._id }).countDocuments()
-    }
-  },
   Query: {
     me: (root, args, context) => context.currentUser,
     authorCount: () => Author.collection.countDocuments(),
@@ -150,7 +145,7 @@ const resolvers = {
 
       try {
         if (!author) {
-          author = new Author({ name: args.author.name, born: null })
+          author = new Author({ name: args.author.name, born: null, bookCount: 1 })
           author.save()
           const book = new Book({ ...args, author })
           book.save()
@@ -158,6 +153,8 @@ const resolvers = {
           pubsub.publish('BOOK_ADDED', { bookAdded: book })
           return book
         } else {
+          author.bookCount += 1;
+          author.save()
           const book = new Book({ ...args, author })
           book.save()
           

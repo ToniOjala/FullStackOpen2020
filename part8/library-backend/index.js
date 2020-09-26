@@ -1,4 +1,4 @@
-const { ApolloServer, gql, UserInputError, AuthenticationError } = require('apollo-server')
+const { ApolloServer, gql, UserInputError, AuthenticationError, PubSub } = require('apollo-server')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const Author = require('./models/author')
@@ -8,9 +8,9 @@ require('dotenv').config()
 
 const MONGODB_URI = process.env.MONGODB_URI
 const JWT_SECRET = process.env.SECRET
+const pubsub = new PubSub()
 
 mongoose.set('useFindAndModify', false)
-
 console.log('Connecting to: ', MONGODB_URI)
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
@@ -79,6 +79,10 @@ const typeDefs = gql`
       name: String!
       setBornTo: Int
     ):Author
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `
 
@@ -150,12 +154,14 @@ const resolvers = {
           author.save()
           const book = new Book({ ...args, author })
           book.save()
-          
+
+          pubsub.publish('BOOK_ADDED', { bookAdded: book })
           return book
         } else {
           const book = new Book({ ...args, author })
           book.save()
-
+          
+          pubsub.publish('BOOK_ADDED', { bookAdded: book })
           return book
         }
       } catch (error) {
@@ -175,6 +181,11 @@ const resolvers = {
       const updatedAuthor = Author.findOne({ name: args.name })
       return updatedAuthor
     }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    }
   }
 }
 
@@ -191,6 +202,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

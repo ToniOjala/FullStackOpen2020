@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react'
-import { useApolloClient, useSubscription } from '@apollo/client'
+import React, { useEffect, useState } from 'react'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
@@ -34,11 +34,18 @@ const Nav = ({ loggedIn, setPage, logout }) => {
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [books, setBooks] = useState([])
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+  const booksResult = useQuery(ALL_BOOKS)
 
-  const updateCacheWith = addedBook => {
-    const includedIn = (set, object) => set.map(p => p.id).includes(object.id)
+  useEffect(() => {
+    if (booksResult.data) setBooks(booksResult.data.allBooks)
+  })
+
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) => 
+      set.map(p => p.id).includes(object.id)  
 
     const dataInStore = client.readQuery({ query: ALL_BOOKS })
     if (!includedIn(dataInStore.allBooks, addedBook)) {
@@ -46,14 +53,14 @@ const App = () => {
         query: ALL_BOOKS,
         data: { allBooks : dataInStore.allBooks.concat(addedBook) }
       })
-    }
+    }   
   }
 
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
       const addedBook = subscriptionData.data.bookAdded
-      console.log(addedBook)
       updateCacheWith(addedBook)
+      setBooks(books.concat(addedBook))
     }
   })
 
@@ -63,6 +70,8 @@ const App = () => {
     client.resetStore()
     setPage('authors')
   }
+
+  if (booksResult.loading) return null
 
   return (
     <div>
@@ -78,14 +87,17 @@ const App = () => {
 
       <Books
         show={page === 'books'}
+        books={books}
       />
 
       <NewBook
         show={page === 'add'}
+        updateCacheWith={updateCacheWith}
       />
 
       <Recommendations
         show={page === 'recommendations'}
+        books={books}
       />
 
       <LoginForm

@@ -6,7 +6,7 @@ export const calculateBmi = (height:number, weight:number):string => {
   else if (bmi <= 25) return 'Normal (healthy weight)';
   else if (bmi <= 30) return 'High (overweight)';
   else return 'Very high (obese)';
-}
+};
 
 // interface BodyMeasures {
 //   height:number,

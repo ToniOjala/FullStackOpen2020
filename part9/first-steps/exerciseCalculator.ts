@@ -17,19 +17,16 @@ const calculateExercises = (hours:number[], targetHours:number):Result => {
     ratingDescription: '',
     target: targetHours,
     average: 0,
-  }
-  let successfulDays = 0;
+  };
   let totalHours = 0;
   
-  // Gather training days, total hours and successful days
+  // Gather training days, total hours
   hours.forEach(h => {
     if (h > 0) {
       result.trainingDays++;
       totalHours += h;
-
-      if (h >= targetHours) successfulDays++;
     }
-  })
+  });
 
   // Calculate average hours
   result.average = totalHours / hours.length;
@@ -41,13 +38,13 @@ const calculateExercises = (hours:number[], targetHours:number):Result => {
   // Determine rating description
   switch(result.rating) {
     case 1: 
-      result.ratingDescription = 'you lack self-discipline'
+      result.ratingDescription = 'you lack self-discipline';
       break;
     case 2:
-      result.ratingDescription = 'almost there'
+      result.ratingDescription = 'almost there';
       break;
     case 3:
-      result.ratingDescription = 'you have reached your goal'
+      result.ratingDescription = 'you have reached your goal';
       break;
     default:
       break;
@@ -57,7 +54,7 @@ const calculateExercises = (hours:number[], targetHours:number):Result => {
   if (result.average >= targetHours) result.success = true;
 
   return result;
-}
+};
 
 interface InputValues {
   loggedHours: Array<number>,
@@ -69,17 +66,17 @@ const parseArgs = (args: Array<string>):InputValues => {
 
   args.forEach(arg => {
     if(isNaN(Number(arg))) throw new Error('At least one of the provided values was not a number!');
-  })
+  });
 
-  const targetHours:number = Number(args.shift());
+  const targetHours = Number(args.shift());
   const loggedHours:Array<number> = [];
 
   args.forEach(arg => {
     loggedHours.push(Number(arg));
-  })
+  });
 
-  return { loggedHours, targetHours }
-}
+  return { loggedHours, targetHours };
+};
 
 const { loggedHours, targetHours } = parseArgs(process.argv.slice(2));
 

@@ -59,4 +59,28 @@ const calculateExercises = (hours:number[], targetHours:number):Result => {
   return result;
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+interface InputValues {
+  loggedHours: Array<number>,
+  targetHours: number
+}
+
+const parseArgs = (args: Array<string>):InputValues => {
+  if (args.length < 2) throw new Error('Not enough arguments');
+
+  args.forEach(arg => {
+    if(isNaN(Number(arg))) throw new Error('At least one of the provided values was not a number!');
+  })
+
+  const targetHours:number = Number(args.shift());
+  const loggedHours:Array<number> = [];
+
+  args.forEach(arg => {
+    loggedHours.push(Number(arg));
+  })
+
+  return { loggedHours, targetHours }
+}
+
+const { loggedHours, targetHours } = parseArgs(process.argv.slice(2));
+
+console.log(calculateExercises(loggedHours, targetHours));

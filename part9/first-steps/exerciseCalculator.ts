@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
   periodLength:number,
   trainingDays:number,
   success:boolean,
@@ -8,7 +8,7 @@ interface Result {
   average:number
 }
 
-const calculateExercises = (hours:number[], targetHours:number):Result => {
+export const calculateExercises = (hours:number[], targetHours:number):Result => {
   const result:Result = {
     periodLength: hours.length,
     trainingDays: 0,
@@ -56,28 +56,28 @@ const calculateExercises = (hours:number[], targetHours:number):Result => {
   return result;
 };
 
-interface InputValues {
-  loggedHours: Array<number>,
-  targetHours: number
-}
+// interface InputValues {
+//   loggedHours: Array<number>,
+//   targetHours: number
+// }
 
-const parseArgs = (args: Array<string>):InputValues => {
-  if (args.length < 2) throw new Error('Not enough arguments');
+// const parseArgs = (args: Array<string>):InputValues => {
+//   if (args.length < 2) throw new Error('Not enough arguments');
 
-  args.forEach(arg => {
-    if(isNaN(Number(arg))) throw new Error('At least one of the provided values was not a number!');
-  });
+//   args.forEach(arg => {
+//     if(isNaN(Number(arg))) throw new Error('At least one of the provided values was not a number!');
+//   });
 
-  const targetHours = Number(args.shift());
-  const loggedHours:Array<number> = [];
+//   const targetHours = Number(args.shift());
+//   const loggedHours:Array<number> = [];
 
-  args.forEach(arg => {
-    loggedHours.push(Number(arg));
-  });
+//   args.forEach(arg => {
+//     loggedHours.push(Number(arg));
+//   });
 
-  return { loggedHours, targetHours };
-};
+//   return { loggedHours, targetHours };
+// };
 
-const { loggedHours, targetHours } = parseArgs(process.argv.slice(2));
+// const { loggedHours, targetHours } = parseArgs(process.argv.slice(2));
 
-console.log(calculateExercises(loggedHours, targetHours));
+// console.log(calculateExercises(loggedHours, targetHours));

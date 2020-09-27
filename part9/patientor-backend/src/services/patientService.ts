@@ -10,7 +10,7 @@ const getAll = ():Array<PrivatePatient> => {
   ));
 };
 
-const create = (patient: NewPatient) => {
+const create = (patient: NewPatient): Patient => {
   const newPatient = {
     id: uuidv4(),
   ...patient

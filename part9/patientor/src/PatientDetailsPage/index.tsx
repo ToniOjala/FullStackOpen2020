@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useStateValue } from "../state";
+import { useStateValue, updatePatient } from "../state";
 import axios from "axios";
 
 import { apiBaseUrl } from "../constants";
@@ -12,17 +12,17 @@ const PatientDetailsPage: React.FC = () => {
   const [{ patients }, dispatch] = useStateValue();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
 
-  const updatePatient = async () => {
+  const getPatientDetails = async () => {
     const response = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
     const patient = response.data;
     if (patient) patients[id] = patient;
-    dispatch({ type: "UPDATE_PATIENT", payload: patient });
+    dispatch(updatePatient(patient));
     setCurrentPatient(patients[id]);
   };
 
   useEffect(() => {
     setCurrentPatient(patients[id]);
-    if (patients[id] && !patients[id].entries) updatePatient();
+    if (patients[id] && !patients[id].entries) getPatientDetails();
   }, []);
 
   return (

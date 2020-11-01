@@ -10,7 +10,7 @@ const getAll = ():Array<PublicPatient> => {
   ));
 };
 
-const getById = (id:string):PublicPatient | undefined => {
+const getById = (id:string):Patient | undefined => {
   const patient = patients.find(p => p.id === id);
   if (patient) patient.entries = [];
   return patient;

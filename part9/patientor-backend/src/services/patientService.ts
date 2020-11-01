@@ -1,13 +1,19 @@
 import patientData from '../../data/patients.json';
-import { Patient, PrivatePatient, NewPatient } from '../types';
+import { Patient, PublicPatient, NewPatient } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 const patients: Array<Patient> = patientData as Array<Patient>;
 
-const getAll = ():Array<PrivatePatient> => {
+const getAll = ():Array<PublicPatient> => {
   return patients.map(({ id, name, dateOfBirth, gender, occupation }) => (
     { id, name, dateOfBirth, gender, occupation }
   ));
+};
+
+const getById = (id:string):PublicPatient | undefined => {
+  const patient = patients.find(p => p.id === id);
+  if (patient) patient.entries = [];
+  return patient;
 };
 
 const create = (patient: NewPatient): Patient => {
@@ -22,5 +28,6 @@ const create = (patient: NewPatient): Patient => {
 
 export default {
   getAll,
+  getById,
   create
 };

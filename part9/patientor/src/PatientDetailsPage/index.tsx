@@ -6,10 +6,11 @@ import axios from "axios";
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
 import { Icon } from "semantic-ui-react";
+import EntryDetails from './EntryDetails';
 
 const PatientDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [{ patients, diagnoses }, dispatch] = useStateValue();
+  const [{ patients }, dispatch] = useStateValue();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
 
   const getPatientDetails = async () => {
@@ -38,12 +39,7 @@ const PatientDetailsPage: React.FC = () => {
       <h3>Entries</h3>
       {currentPatient.entries?.map(entry => {
         return (
-          <div key={entry.id}>
-            <div><strong>{entry.date}</strong> {entry.description}</div>
-            <ul>
-              {entry.diagnosisCodes?.map(dc => <li key={dc}>{dc} {diagnoses[dc].name}</li>)}
-            </ul>
-          </div>
+          <EntryDetails key={entry.id} entry={entry} />
         );
       })}
     </div>

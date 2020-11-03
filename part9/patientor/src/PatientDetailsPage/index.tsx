@@ -25,14 +25,27 @@ const PatientDetailsPage: React.FC = () => {
     if (patients[id] && !patients[id].entries) getPatientDetails();
   }, []);
 
+  if (!currentPatient) return null;
+
   return (
     <div>
       <h1>
-        {currentPatient ? currentPatient.name : "Name"}
-        {currentPatient && currentPatient.gender === "male" ? <Icon name="mars" /> : <Icon name="venus" />}
+        {currentPatient.name}
+        {currentPatient.gender === "male" ? <Icon name="mars" /> : <Icon name="venus" />}
       </h1>
-      <div>ssn: {currentPatient ? currentPatient.ssn : "unknown"}</div>
-      <div>occupation: {currentPatient ? currentPatient.occupation : "unknown"}</div>
+      <div>ssn: {currentPatient.ssn}</div>
+      <div>occupation: {currentPatient.occupation}</div>
+      <h3>Entries</h3>
+      {currentPatient.entries?.map(entry => {
+        return (
+          <div key={entry.id}>
+            <div><strong>{entry.date}</strong> {entry.description}</div>
+            <ul>
+              {entry.diagnosisCodes?.map(dc => <li key={dc}>{dc}</li>)}
+            </ul>
+          </div>
+        );
+      })}
     </div>
   );
 };

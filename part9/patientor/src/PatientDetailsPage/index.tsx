@@ -9,6 +9,7 @@ import { Button, Icon } from "semantic-ui-react";
 import EntryDetails from './EntryDetails';
 import AddHealthCheckEntryModal from '../AddHealthCheckEntryModal';
 import AddHospitalEntryModal from '../AddHospitalEntryModal';
+import AddOccupationalEntryModal from '../AddOccupationalEntryModal';
 
 const PatientDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ const PatientDetailsPage: React.FC = () => {
   const [currentPatient, setCurrentPatient] = useState<Patient>();
   const [hospitalModalOpen, setHospitalModalOpen] = useState<boolean>(false);
   const [healthCheckModalOpen, setHealthCheckModalOpen] = useState<boolean>(false);
+  const [occupationalModalOpen, setOccupationalModalOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
 
   const openHospitalModal = (): void => {
@@ -26,9 +28,14 @@ const PatientDetailsPage: React.FC = () => {
     setHealthCheckModalOpen(true);
   };
 
+  const openOccupationalEntryModal = (): void => {
+    setOccupationalModalOpen(true);
+  };
+
   const closeModal = (): void => {
     setHospitalModalOpen(false);
     setHealthCheckModalOpen(false);
+    setOccupationalModalOpen(false);
     setError(undefined);
   };
 
@@ -84,8 +91,15 @@ const PatientDetailsPage: React.FC = () => {
         error={error}
         onClose={closeModal}
       />
+      <AddOccupationalEntryModal
+        modalOpen={occupationalModalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
       <Button onClick={() => openHospitalModal()}>Add New Hospital Entry</Button>
       <Button onClick={() => openHealthCheckModal()}>Add New Health Check Entry</Button>
+      <Button onClick={() => openOccupationalEntryModal()}>Add New Occupational Healthcare Entry</Button>
     </div>
   );
 };

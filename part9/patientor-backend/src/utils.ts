@@ -183,7 +183,7 @@ const isSickLeave = (sickLeave: any): sickLeave is SickLeave => {
 };
 
 const parseHealthCheckRating = (rating: any): HealthCheckRating => {
-  if (!rating || !isHealthCheckRating(rating)) {
+  if (rating === null || rating === undefined || !isHealthCheckRating(rating)) {
     throw new Error('Incorrect or missing health check rating: ' + rating);
   }
   return rating;

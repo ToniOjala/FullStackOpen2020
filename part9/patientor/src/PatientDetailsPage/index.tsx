@@ -4,14 +4,36 @@ import { useStateValue, updatePatient } from "../state";
 import axios from "axios";
 
 import { apiBaseUrl } from "../constants";
-import { Patient } from "../types";
-import { Icon } from "semantic-ui-react";
+import { NewEntry, Patient } from "../types";
+import { Button, Icon } from "semantic-ui-react";
 import EntryDetails from './EntryDetails';
+
+import AddEntryModal from '../AddEntryModal';
 
 const PatientDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [{ patients }, dispatch] = useStateValue();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+
+  const submitNewEntry = async (values: NewEntry) => {
+    try {
+      const { data: updatedPatient } = await axios.post<Patient>(`${apiBaseUrl}/patients/${currentPatient?.id}/entries`, values);
+      dispatch(updatePatient(updatedPatient));
+      closeModal();
+    } catch (e) {
+      console.error(e.response.data);
+      setError(e.response.data.error);
+    }
+  };
 
   const getPatientDetails = async () => {
     const response = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
@@ -24,7 +46,7 @@ const PatientDetailsPage: React.FC = () => {
   useEffect(() => {
     setCurrentPatient(patients[id]);
     if (patients[id] && !patients[id].entries) getPatientDetails();
-  }, []);
+  }, [patients]);
 
   if (!currentPatient) return null;
 
@@ -42,6 +64,13 @@ const PatientDetailsPage: React.FC = () => {
           <EntryDetails key={entry.id} entry={entry} />
         );
       })}
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
+      <Button onClick={() => openModal()}>Add New Entry</Button>
     </div>
   );
 };

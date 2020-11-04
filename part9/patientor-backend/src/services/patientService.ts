@@ -1,8 +1,8 @@
 import patientData from '../../data/patients';
-import { Patient, PublicPatient, NewPatient } from '../types';
+import { Patient, PublicPatient, NewPatient, NewEntry } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
-const patients = [...patientData];
+let patients = [...patientData];
 
 const getAll = (): Array<PublicPatient> => {
   return patients.map(({ id, name, dateOfBirth, gender, occupation }) => (
@@ -26,8 +26,20 @@ const create = (patient: NewPatient): Patient => {
   return newPatient;
 };
 
+const addEntry = (patient: Patient, newEntry: NewEntry): Patient => {
+  patient.entries.push({ id: uuidv4(), ...newEntry });
+
+  patients = patients.map(p => {
+    if (p.id === patient.id) return patient;
+    return p;
+  });
+
+  return patient;
+};
+
 export default {
   getAll,
   getById,
-  create
+  create,
+  addEntry
 };

@@ -3,8 +3,8 @@ import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
 
 import { TextField } from "../AddPatientModal/FormField";
-import { NewEntry, EntryType, HealthCheckRating } from '../types';
-import { DiagnosisSelection, NumberField } from '../AddPatientModal/FormField';
+import { NewEntry, EntryType } from '../types';
+import { DiagnosisSelection } from '../AddPatientModal/FormField';
 import { useStateValue } from '../state';
 
 interface Props {
@@ -18,12 +18,15 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
   return (
     <Formik
       initialValues={{
-        type: EntryType.HealthCheck,
+        type: EntryType.Hospital,
         description: "",
         date: "",
         specialist: "",
         diagnosisCodes: [],
-        healthCheckRating: HealthCheckRating.Healthy
+        discharge: {
+          date: "",
+          criteria: ""
+        }
       }}
       onSubmit={onSubmit}
       validate={values => {
@@ -38,9 +41,6 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
-        // if (!values.healthCheckRating) {
-        //   errors.healthCheckRating = requiredError;
-        // }
         return errors;
       }}
     >
@@ -71,12 +71,16 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
               component={TextField}
             />
             <Field
-              label="Health Check Rating"
-              placeholder="Health Check Rating"
-              name="healthCheckRating"
-              component={NumberField}
-              min={0}
-              max={3}
+              label="Discharge Date"
+              placeholder="YYYY-MM-DD"
+              name="discharge.date"
+              component={TextField}
+            />
+            <Field
+              label="Discharge Criteria"
+              placeholder="Discharge Criteria"
+              name="discharge.criteria"
+              component={TextField}
             />
             <Grid>
               <Grid.Column floated="left" width={5}>

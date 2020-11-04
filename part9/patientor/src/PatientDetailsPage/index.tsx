@@ -7,20 +7,28 @@ import { apiBaseUrl } from "../constants";
 import { NewEntry, Patient } from "../types";
 import { Button, Icon } from "semantic-ui-react";
 import EntryDetails from './EntryDetails';
-
-import AddEntryModal from '../AddEntryModal';
+import AddHealthCheckEntryModal from '../AddHealthCheckEntryModal';
+import AddHospitalEntryModal from '../AddHospitalEntryModal';
 
 const PatientDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [{ patients }, dispatch] = useStateValue();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [hospitalModalOpen, setHospitalModalOpen] = useState<boolean>(false);
+  const [healthCheckModalOpen, setHealthCheckModalOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
 
-  const openModal = (): void => setModalOpen(true);
+  const openHospitalModal = (): void => {
+    setHospitalModalOpen(true);
+  };
+
+  const openHealthCheckModal = (): void => {
+    setHealthCheckModalOpen(true);
+  };
 
   const closeModal = (): void => {
-    setModalOpen(false);
+    setHospitalModalOpen(false);
+    setHealthCheckModalOpen(false);
     setError(undefined);
   };
 
@@ -64,13 +72,20 @@ const PatientDetailsPage: React.FC = () => {
           <EntryDetails key={entry.id} entry={entry} />
         );
       })}
-      <AddEntryModal
-        modalOpen={modalOpen}
+      <AddHealthCheckEntryModal
+        modalOpen={healthCheckModalOpen}
         onSubmit={submitNewEntry}
         error={error}
         onClose={closeModal}
       />
-      <Button onClick={() => openModal()}>Add New Entry</Button>
+      <AddHospitalEntryModal
+        modalOpen={hospitalModalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
+      <Button onClick={() => openHospitalModal()}>Add New Hospital Entry</Button>
+      <Button onClick={() => openHealthCheckModal()}>Add New Health Check Entry</Button>
     </div>
   );
 };
